@@ -2911,7 +2911,7 @@ function format(options) {
         // else, we can just return rely on the exit code of the dotnet format process
         else {
             core_1.info(`dotnet format return code ${dotnetResult}`);
-            return !!dotnetResult;
+            return dotnetResult != 0;
         }
     });
 }
