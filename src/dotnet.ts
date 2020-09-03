@@ -122,6 +122,6 @@ export async function format(options: FormatOptions): Promise<boolean> {
   else
   {
     info(`dotnet format return code ${dotnetResult}`);
-    return !!dotnetResult;
+    return dotnetResult != 0;
   }
 }
