@@ -17,29 +17,34 @@ inputs:
     required: true
 
   action:
-    description: "The primary action dotnet-format should perform (check for errors or apply fixes)"
+    description: "The primary action `dotnet format` should perform. `check` for only checking, `fix` will also actually fix the formatting errors in the files."
     required: false
     default: "check"
 
   only-changed-files:
-    description: "Only changed files in the current pull request should be formatted"
+    description: "Only changed files in the current pull request should be formatted. Only works when the trigger is a pull request."
     required: false
 
   fail-fast:
-    description: "The job should fail if there's a formatting error"
+    description: "The job should fail if there's a formatting error."
     required: false
     default: "true"
 
-  include:
-    description: "The files to include, delimited by space. Cannot be used with the `--workspace` option"
+  workspace:
+    description: "The solution or project file to operate on. In case you want to process all files in a certain folder, set the root folder here and specify the `workspaceIsFolder` option."
     required: false
 
-  workspace:
-    description: "The solution or project file to operate on"
+  workspaceIsFolder:
+    description: "Specifies if the value in `workspace` has to be treated as a simple folder. If true, set `workspace` to the root folder you want to process."
+    required: false
+    default: "false"
+
+  include:
+    description: "The files to include, delimited by space. Cannot be used together with the `workspace` option."
     required: false
 
   exclude:
-    description: "Option to ignore given files/folders"
+    description: "The files to exclude, delimited by space."
     required: false
 
   logLevel:
@@ -48,7 +53,7 @@ inputs:
 
 outputs:
   has-changes:
-    description: "A value indicating if any files were formatted"
+    description: "A value indicating if any files were formatted. If `action` is `check` we will inspect the exit code of `dotnet format` to be <> 0. If `action` is `fix` we see if there are changes to files with `git status -s`."
 
 runs:
   using: "node12"

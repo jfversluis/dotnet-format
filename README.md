@@ -49,12 +49,13 @@ Name | Allowed values | Description
 
 Name | Allowed values | Description
 -- | -- | --
-`action` | `check` (default), `fix` | The primary action dotnet-format should perform.
-`only-changed-files` | `true`, `false` (default) | Only changed files in the current pull request should be formatted.
+`action` | `check` (default), `fix` | The primary action `dotnet format` should perform. Check doesn't make changes to your file, fix will do the actual formatting.
+`only-changed-files` | `true`, `false` (default) | Only changed files in the current pull request should be formatted. Only works when the trigger is a pull request.
 `fail-fast` | `true` (default), `false` | The job should fail if there's a formatting error. Only used with the `check` action.
-`workspace` | `.` | The solution or project file to operate on.
-`folder` | `.` | The folder to operate on. Cannot be used with the `--workspace` option.
-`exclude` | `.` | Comma separated files and/or folders to ignore.
+`workspace` | `.` | The solution or project file to operate on. In case you want to process all files in a certain folder, set the root folder here and specify the `workspaceIsFolder` option.
+`workspaceIsFolder` | `.` | Specifies if the value in `workspace` has to be treated as a simple folder. If true, set `workspace` to the root folder you want to process.
+`include` | `.` | The files to include, delimited by space. Cannot be used together with the `workspace` option.
+`exclude` | `.` | Space delimited list of files and/or folders to ignore.
 `logLevel` | `q[uiet]`, `m[inimal]`, `n[ormal]`, `d[etailed]`,  `diag[nostic]` | Sets the logging verbosity of the dotnet format process
 
 ## Outputs

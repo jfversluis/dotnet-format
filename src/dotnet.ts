@@ -2,16 +2,15 @@ import { debug, info, warning, setFailed } from "@actions/core";
 import { exec } from "@actions/exec";
 import { context } from "@actions/github";
 import { which } from "@actions/io";
-
 import { getPullRequestFiles } from "./files";
 
 import type { ExecOptions } from "@actions/exec/lib/interfaces";
-import { countReset } from "console";
 
 export interface FormatOptions {
   onlyChangedFiles: boolean;
   dryRun?: boolean;
   workspace?: string;
+  workspaceIsFolder?: boolean;
   include?: string;
   exclude?: string;
   logLevel?: string;
@@ -41,6 +40,10 @@ export async function format(options: FormatOptions): Promise<boolean> {
 
   if (options.workspace !== undefined && options.workspace != "") {
     dotnetFormatOptions.push(options.workspace);
+
+    if (options.workspaceIsFolder) {
+      dotnetFormatOptions.push("-f");
+    }
   }
 
   if (options.dryRun) {
@@ -71,16 +74,6 @@ export async function format(options: FormatOptions): Promise<boolean> {
   }
 
   const dotnetPath: string = await which("dotnet", true);
-  // const dotnetCheckResult = await exec(`"${dotnetPath}"`, ["format", "--check", options.workspace ?? ""], execOptions);
-
-  // info(`dotnet format check result ${dotnetCheckResult}`);
-
-  // if ((dotnetCheckResult === 0)) {
-  //   info("No files that need formatting, exiting");
-
-  //   return false;
-  // }
-
   const dotnetResult = await exec(`"${dotnetPath}"`, dotnetFormatOptions, execOptions);
 
   // When NOT doing only a dry-run we inspect the actual changed files
@@ -122,6 +115,6 @@ export async function format(options: FormatOptions): Promise<boolean> {
   else
   {
     info(`dotnet format return code ${dotnetResult}`);
-    return dotnetResult != 0;
+    return !!dotnetResult;
   }
 }
