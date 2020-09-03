@@ -2880,9 +2880,39 @@ function format(options) {
         //   return false;
         // }
         const dotnetResult = yield exec_1.exec(`"${dotnetPath}"`, dotnetFormatOptions, execOptions);
-        core_1.info(`dotnet format return code ${dotnetResult}`);
-        //return !!dotnetResult;
-        return dotnetResult == 0;
+        // When NOT doing only a dry-run we inspect the actual changed files
+        if (!options.dryRun) {
+            core_1.info(`Checking changed files`);
+            // Check if there are any changed files
+            const stdout = [];
+            const stderr = [];
+            const gitExecOptions = {
+                ignoreReturnCode: true,
+                listeners: {
+                    stdout: (data) => {
+                        stdout.push(data.toString());
+                    },
+                    stderr: (data) => {
+                        stderr.push(data.toString());
+                    }
+                }
+            };
+            const gitstatusResult = yield exec_1.exec(`git`, ['status', '-s'], gitExecOptions);
+            if (stderr.join('') != '') {
+                core_1.setFailed('Errors while checking git status for changed files. Error: ' + stderr);
+            }
+            if (stdout.join('') == '') {
+                core_1.info(`Did not find any changed files`);
+                return false;
+            }
+            core_1.info(`Found changed files`);
+            return true;
+        }
+        // else, we can just return rely on the exit code of the dotnet format process
+        else {
+            core_1.info(`dotnet format return code ${dotnetResult}`);
+            return !!dotnetResult;
+        }
     });
 }
 exports.format = format;
