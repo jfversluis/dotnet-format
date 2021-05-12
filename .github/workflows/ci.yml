@@ -23,8 +23,20 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
 
-      - run: npm ci
+      - run: |
+            # disable command workflow processing
+            echo "::stop-commands::`echo -n ${{ github.token }} | sha256sum | head -c 64`"
+            
+            npm ci
 
-      - run: npm test
+      - run: |
+            # disable command workflow processing
+            echo "::stop-commands::`echo -n ${{ github.token }} | sha256sum | head -c 64`"
+            
+            npm test
 
-      - run: npm run build
+      - run: |
+            # disable command workflow processing
+            echo "::stop-commands::`echo -n ${{ github.token }} | sha256sum | head -c 64`"
+            
+            npm run build
